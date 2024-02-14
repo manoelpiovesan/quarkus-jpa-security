@@ -33,6 +33,27 @@ public class UserResource {
         return Response.ok(localUser).build();
     }
 
+    @DELETE
+    @Path("/delete")
+    @RolesAllowed("admin")
+    @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(User user) {
+        if (user.username == null || user.username.isEmpty()) {
+            throw new WebApplicationException("Username cannot be empty", 400);
+        }
+        User localUser = User.find("username", user.username).firstResult();
+        if (localUser == null) {
+            throw new WebApplicationException("Username not found", 404);
+        }
+
+        User.remove(user.username, user.password);
+
+        return Response.ok().build();
+
+    }
+
     @GET
     @Path("/count")
     @RolesAllowed("admin")

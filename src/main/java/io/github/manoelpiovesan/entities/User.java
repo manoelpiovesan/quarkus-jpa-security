@@ -11,6 +11,7 @@ import io.quarkus.security.jpa.Username;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.wildfly.security.password.interfaces.BCryptPassword;
 
 @Entity
 @Table(name = "users")
@@ -35,10 +36,13 @@ public class User extends PanacheEntity {
         user.persist();
     }
 
-    public static void remove(String username) {
+    public static void remove(String username, String password) {
+
         User user = find("username", username).firstResult();
         if (user != null) {
-            user.delete();
+            if(BcryptUtil.matches(password, user.password)){
+                user.delete();
+            }
         }
     }
 

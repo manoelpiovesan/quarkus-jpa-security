@@ -112,5 +112,36 @@ public class UserResourceTest {
                .body(is(count.toString()));
     }
 
+    @Test
+    @Order(7)
+    public void testDeleteUser() {
+        userMap.put("username", "newuser");
+        userMap.put("password", "newuser123");
+
+        given()
+                .contentType(ContentType.JSON)
+                .auth()
+                .basic(username, password)
+                .body(userMap)
+                .when()
+                .delete("/users/delete")
+                .then()
+                .statusCode(200);
+
+        count--;
+    }
+
+    @Test
+    @Order(8)
+    public void testThirdCount() {
+        given().auth()
+               .basic(username, password)
+               .when()
+               .get("/users/count")
+               .then()
+               .statusCode(200)
+               .contentType(ContentType.TEXT)
+               .body(is(count.toString()));
+    }
 
 }
